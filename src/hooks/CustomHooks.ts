@@ -1,4 +1,4 @@
-import { getMovies } from '@/services/DataService'
+import { getCinemas, getMovies } from '@/services/DataService'
 import { useQuery } from 'react-query'
 
 export function useMovies() {
@@ -17,3 +17,18 @@ export function useMovies() {
     }
 }
 
+export function useCinemas({city}: {city: string}) {
+    const {
+        isLoading,
+        isError,
+        data: cinemas,
+        refetch,
+    } = useQuery(['cinemas'], () => getCinemas({city}))
+
+    return {
+        isLoading,
+        isError,
+        cinemas: cinemas || [],
+        refetch,
+    }
+}

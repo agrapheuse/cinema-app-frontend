@@ -2,10 +2,13 @@
 
 import { useMovies } from "@/hooks/CustomHooks";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FaCog, FaUserCircle } from "react-icons/fa";
 
 export default function MovieHome() {
   const { isLoading, isError, movies } = useMovies();
+
+  const router = useRouter();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -18,7 +21,7 @@ export default function MovieHome() {
   return (
     <div>
       <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <div className="text-xl">
+      <div className="text-xl" onClick={() => router.push("/settings")}>
         <FaCog />
       </div>
 

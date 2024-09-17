@@ -2,6 +2,7 @@
 
 import { ReactNode, useState } from "react"
 import CountryContext from "./CountryContext"
+import { useLocalStorage } from 'usehooks-ts';
 
 interface WithChildren {
     children: ReactNode | ReactNode[]
@@ -9,7 +10,7 @@ interface WithChildren {
 
 function CountryContextProvider({ children }: WithChildren) {
     const [country, setCountry] = useState<string>('')
-    const [city, setCity] = useState<string>('')
+    const [city, setCity] = useLocalStorage<string>('user-city', '')
 
     const value = {
         country,
