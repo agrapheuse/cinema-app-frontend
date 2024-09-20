@@ -1,16 +1,16 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from 'react-query';
-import CountryContextProvider from "@/contexts/CountryContextProvider";
+import SettingsContextProvider from "@/contexts/SettingsContextProvider";
 
 const queryClient = new QueryClient();
 
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <CountryContextProvider>
+      <SettingsContextProvider>
         {children}
-      </CountryContextProvider>
+      </SettingsContextProvider>
     </QueryClientProvider>
   );
 }

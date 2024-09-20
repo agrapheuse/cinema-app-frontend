@@ -11,7 +11,7 @@ interface WithChildren {
 function SettingsContextProvider({ children }: WithChildren) {
     const [country, setCountry] = useState<string>('');
     const [city, setCity] = useLocalStorage<string>('user-city', '');
-    const [cinemas, setCinemas] = useState<string[]>([]);
+    const [followedCinemas, setFollowedCinemas] = useState<string[]>([]);
     const [languageFilters, setLanguageFilters] = useState<string[]>([]);
 
     const value = {
@@ -19,8 +19,8 @@ function SettingsContextProvider({ children }: WithChildren) {
         setCountry,
         city,
         setCity,
-        cinemas,
-        setCinemas,
+        followedCinemas,
+        setFollowedCinemas,
         languageFilters,
         setLanguageFilters,
     }
