@@ -1,9 +1,9 @@
 import { Movie } from "@/types/Movie";
 import axios from "axios";
 
-export const getMovies = async () => {
+export const getMovies = async ({city}: {city: string}) => {
     axios.defaults.baseURL = 'https://localhost:5001'
-    const url = `/api/movies`
+    const url = `/api/movies/${city}`
     const movies = await axios.get<Movie[]>(url)
     return movies.data
 }

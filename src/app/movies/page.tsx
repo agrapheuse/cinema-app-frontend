@@ -1,12 +1,15 @@
 "use client"
 
+import SettingsContext from "@/contexts/SettingsContext";
 import { useMovies } from "@/hooks/CustomHooks";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
 import { FaCog, FaUserCircle } from "react-icons/fa";
 
 export default function MovieHome() {
-  const { isLoading, isError, movies } = useMovies();
+  const { city } = useContext(SettingsContext);
+  const { isLoading, isError, movies } = useMovies({city});
 
   const router = useRouter();
 
