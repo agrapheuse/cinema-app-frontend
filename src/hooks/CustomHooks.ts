@@ -1,7 +1,7 @@
 import { getCinemas, getMovies } from '@/services/DataService'
 import { useQuery } from 'react-query'
 
-export function useMovies({city}: {city: string}) {
+export function useMovies({city}: {city: string | null}) {
     const {
         isLoading,
         isError,
