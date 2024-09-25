@@ -15,7 +15,8 @@ const MovieRoute = async ({ params }: MovieRouteProps) => {
 };
 
 export async function generateStaticParams() {
-  const movies = await fetch(`${process.env.URL}/api/movies`)
+  console.log(process.env.NEXT_PUBLIC_API_URL)
+  const movies = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/movies`)
     .then((res) => res.json());
 
   return movies.map((movie: Movie) => ({
