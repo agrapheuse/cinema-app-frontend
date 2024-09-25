@@ -62,10 +62,10 @@ export default function MovieHome() {
               
               <div className="absolute inset-x-0 bottom-0 flex justify-center p-4">
                 <a
-                  href={movie.infoLink}
                   target="_blank"
                   className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
                   rel="noopener noreferrer"
+                  onClick={() => router.push("/movies/" + movie.uuid)}
                 >
                   More
                 </a>

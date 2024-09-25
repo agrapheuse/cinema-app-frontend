@@ -1,5 +1,6 @@
 import { Movie } from "@/types/Movie";
-import Image from 'next/image';
+import MovieComponent from "@/components/MovieComponent";
+import { getMovie, getMovies } from "@/services/DataService";
 
 interface MovieRouteProps {
   params: { movieId: string };
@@ -7,24 +8,10 @@ interface MovieRouteProps {
 
 const MovieRoute = async ({ params }: MovieRouteProps) => {
   const { movieId } = params;
+  
+  const movie = await getMovie({uuid : movieId})
 
-  const movie: Movie = await fetch(`${process.env.URL}/api/movies/movie/${movieId}`)
-    .then((res) => res.json());
-
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold">{movie.title}</h1>
-      <Image
-        src={movie.imageUrl}
-        alt={movie.title}
-        width={1000}
-        height={1000}
-        className="w-full h-auto object-cover rounded-md"
-      />
-      <p>{movie.description}</p>
-      {/* Add more movie details here */}
-    </div>
-  );
+  return <MovieComponent movie={movie} />;
 };
 
 export async function generateStaticParams() {
