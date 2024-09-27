@@ -1,6 +1,7 @@
 "use client"
 
 import { countries } from "@/utils/countryCity";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 interface CityCountrySelectProps {
     chosenCountry: string;
@@ -12,64 +13,71 @@ interface CityCountrySelectProps {
 
 export default function CityCountrySelect({chosenCountry, setChosenCountry, chosenCity, setChosenCity, hideCityButton}: CityCountrySelectProps) {
     
-    const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setChosenCountry(e.target.value);
+    const handleCountryChange = (value: string) => {
+      setChosenCountry(value);
       setChosenCity(""); 
     };
   
-    const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setChosenCity(e.target.value);
+    const handleCityChange = (value: string) => {
+      setChosenCity(value);
     };
     
     return (
-        <div>
-            <div className="mt-5">
+        <div className="flex flex-col items-center">
+            <div className="w-full mb-5 flex items-center">
                 <label
-                    htmlFor="country-select"
-                    className="block text-lg font-medium mb-2"
+                    className="block text-lg w-1/2 font-medium mr-5"
                 >
-                Choose a country:
+                    Choose a country:
                 </label>
-                <select
-                    id="country-select"
-                    value={chosenCountry}
-                    onChange={handleCountryChange}
-                    className="border border-gray-300 rounded p-2 w-full"
-                >
-                <option value="">-- Select Country --</option>
-                {countries.map((c) => (
-                    <option key={c.name} value={c.name}>
-                    {c.name}
-                    </option>
-                ))}
-                </select>
-            </div>
 
-        {(chosenCountry || !hideCityButton) && (
-            <div className="mt-5">
-            <label
-                htmlFor="city-select"
-                className="block text-lg font-medium mb-2"
-            >
-                Choose a city:
-            </label>
-            <select
-                id="city-select"
-                value={chosenCity}
-                onChange={handleCityChange}
-                className="border border-gray-300 rounded p-2 w-full"
-            >
-                <option value="">-- Select City --</option>
-                {countries
-                .find((c) => c.name === chosenCountry)
-                ?.cities.map((city) => (
-                    <option key={city} value={city}>
-                    {city}
-                    </option>
-                ))}
-            </select>
+                <Select 
+                    value={chosenCountry}
+                    onValueChange={(e: string) => handleCountryChange(e)}
+                >
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {countries.map((c) => (
+                        <SelectItem 
+                            key={c.name}
+                            value={c.name}
+                        >
+                                {c.name}
+                        </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
-        )}
-      </div>
-    )
+    
+            <div className='w-full flex items-center'>
+                <label
+                    className="block text-lg w-1/2 font-medium mr-5"
+                >
+                    Choose a city:
+                </label>
+                <Select 
+                        value={chosenCity}
+                        onValueChange={(e: string) => handleCityChange(e)}
+                >
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select City" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {countries
+                        .find((c) => c.name === chosenCountry)
+                        ?.cities.map((c) => (
+                        <SelectItem 
+                            key={c}
+                            value={c}
+                        >
+                                {c}
+                        </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+        </div>
+      )
 }
