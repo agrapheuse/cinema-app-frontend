@@ -1,31 +1,30 @@
-"use client";
+'use client'
 
-import { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import CityCountrySelect from "@/components/CityCountrySelect";
-import SettingsContext from "@/contexts/SettingsContext";
-import { Button } from "@/components/ui/button";
-import { FaRegCircleUser } from "react-icons/fa6";
+import { useContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import CityCountrySelect from '@/components/CityCountrySelect'
+import SettingsContext from '@/contexts/SettingsContext'
+import { Button } from '@/components/ui/button'
+import { FaRegCircleUser } from 'react-icons/fa6'
 //import { quicksand } from "@/app/layout";
 
-export default function Home() {
-  const [chosenCountry, setChosenCountry] = useState("");
-  const [chosenCity, setChosenCity] = useState("");
+export default function Home(): JSX.Element {
+  const [chosenCountry, setChosenCountry] = useState('')
+  const [chosenCity, setChosenCity] = useState('')
 
-  const { setCountry, setCity } = useContext(SettingsContext);
-  
-  const router = useRouter();
+  const { setCountry, setCity } = useContext(SettingsContext)
+
+  const router = useRouter()
 
   useEffect(() => {
-    router.prefetch("/movies");
-  }, [router]);
+    router.prefetch('/movies')
+  }, [router])
 
-  const handleExploreClick = () => {
-    setCountry(chosenCountry);
-    setCity(chosenCity);
-    router.push('/movies');
-  };
-
+  const handleExploreClick = (): void => {
+    setCountry(chosenCountry)
+    setCity(chosenCity)
+    router.push('/movies')
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
@@ -40,10 +39,10 @@ export default function Home() {
         </h1>
       </div>
 
-      <CityCountrySelect 
-        chosenCountry={chosenCountry} 
-        setChosenCountry={setChosenCountry} 
-        chosenCity={chosenCity} 
+      <CityCountrySelect
+        chosenCountry={chosenCountry}
+        setChosenCountry={setChosenCountry}
+        chosenCity={chosenCity}
         setChosenCity={setChosenCity}
         hideCityButton={true}
       />
@@ -58,5 +57,5 @@ export default function Home() {
         </div>
       )}
     </div>
-  );
+  )
 }

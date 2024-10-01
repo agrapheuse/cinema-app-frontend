@@ -1,15 +1,11 @@
-"use client";
+'use client'
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
-const BackButton = () => {
-  const router = useRouter();
+const BackButton = (): JSX.Element => {
+  const router = useRouter()
 
-  return (
-    <button onClick={() => router.back()}>
-      Back
-    </button>
-  );
-};
+  return <button onClick={() => router.back()}>Back</button>
+}
 
-export default BackButton;
+export default BackButton

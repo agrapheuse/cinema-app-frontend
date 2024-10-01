@@ -1,27 +1,37 @@
-import { Movie } from "@/types/Movie";
-import MovieComponent from "@/components/MovieComponent";
-import { getMovie, getMovies } from "@/services/DataService";
+import type { Movie } from '@/types/Movie'
+import MovieComponent from '@/components/MovieComponent'
+import { getMovie } from '@/services/DataService'
 
 interface MovieRouteProps {
-  params: { movieId: string };
+  params: { movieId: string }
 }
 
-const MovieRoute = async ({ params }: MovieRouteProps) => {
-  const { movieId } = params;
-  
-  const movie = await getMovie({uuid : movieId})
+const MovieRoute = async ({
+  params,
+}: MovieRouteProps): Promise<JSX.Element> => {
+  const { movieId } = params
 
-  return <MovieComponent movie={movie} />;
-};
+  const movie = await getMovie({ uuid: movieId })
 
-export async function generateStaticParams() {
-  console.log(process.env.NEXT_PUBLIC_API_URL)
-  const movies = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/movies`)
-    .then((res) => res.json());
-
-  return movies.map((movie: Movie) => ({
-    movieId: movie.uuid,
-  }));
+  return <MovieComponent movie={movie} />
 }
 
-export default MovieRoute;
+export async function generateStaticParams(): Promise<{ movieId: string }[]> {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/movies`,
+    )
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch movies')
+    }
+
+    const movies: Movie[] = (await response.json()) as Movie[]
+
+    return movies.map((movie) => ({ movieId: movie.uuid }))
+  } catch (error) {
+    return []
+  }
+}
+
+export default MovieRoute

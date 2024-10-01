@@ -1,9 +1,6 @@
 export const countries = [
-    { 
-        name: "Belgium", 
-        cities: [
-            "Antwerp", 
-            "Brussels"
-        ] 
-    }
-];
+  {
+    name: 'Belgium',
+    cities: ['Antwerp', 'Brussels'],
+  },
+]
