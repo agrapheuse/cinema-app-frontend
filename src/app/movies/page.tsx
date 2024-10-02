@@ -1,15 +1,18 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import SettingsContext from '@/contexts/SettingsContext'
 import { useMovies } from '@/hooks/CustomHooks'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { FaCog, FaUserCircle } from 'react-icons/fa'
+import { FaRegHeart, FaHeart } from 'react-icons/fa'
 
 export default function MovieHome(): JSX.Element {
   const { city } = useContext(SettingsContext)
   const { isLoading, isError, data: movies } = useMovies({ city })
+  const [liked, setLiked] = useState(false)
 
   const router = useRouter()
 
@@ -46,48 +49,51 @@ export default function MovieHome(): JSX.Element {
                 <Image
                   src={movie.imageUrl}
                   alt={movie.title || ''}
-                  width={500}
-                  height={192}
-                  className="w-full h-48 object-cover rounded-md"
+                  width={100}
+                  height={100}
+                  className="w-full h-40 object-cover rounded-md"
                 />
               </div>
 
-              <div className="w-1/2 flex flex-col justify-center items-center">
-                <h2 className="text-xl font-semibold mb-1">{movie.title}</h2>
-                <p className="text-gray-600 mb-1">{movie.director}</p>
-                <p className="text-gray-600 mb-1">{movie.category}</p>
-                <p className="text-gray-600 mb-2">{movie.description}</p>
+              <div className="w-1/4 flex flex-col justify-center text-left pl-4">
+                <p className="text-sm text-gray-500 mb-0.5">
+                  {new Date(movie.dateTime).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+                <p className="text-sm text-gray-500 mb-0.5">
+                  {new Date(movie.dateTime).toLocaleDateString('en-US', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: false,
+                  })}
+                </p>
 
-                <div className="absolute inset-x-0 bottom-0 flex justify-center p-4">
-                  <a
-                    target="_blank"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
-                    rel="noopener noreferrer"
-                    onClick={() => router.push('/movies/' + movie.uuid)}
-                  >
-                    More
-                  </a>
-                </div>
+                <h2 className="text-xl font-semibold mb-0.5 text-gray-800">
+                  {movie.title}
+                </h2>
+                <p className="text-gray-600 mb-0.5">{movie.director}</p>
               </div>
 
-              <div className="w-1/4 flex flex-col items-end">
-                <a
-                  href={movie.infoLink}
-                  target="_blank"
-                  className="text-blue-500 hover:underline mb-2"
-                  rel="noopener noreferrer"
-                >
-                  More Info
-                </a>
-                {movie.ticketLink && (
-                  <a
-                    href={movie.ticketLink}
-                    target="_blank"
-                    className="text-green-500 hover:underline"
-                    rel="noopener noreferrer"
-                  >
-                    Buy Tickets
-                  </a>
+              <Button
+                className="w-1/4 flex flex-col justify-center text-center"
+                onClick={() => router.push('/movies/' + movie.uuid)}
+              >
+                More
+              </Button>
+              <div className="w-1/4 flex items-center ml-4">
+                {liked ? (
+                  <FaHeart
+                    className="text-red-500 text-6xl"
+                    onClick={() => setLiked(false)}
+                  />
+                ) : (
+                  <FaRegHeart
+                    className="text-gray-800 text-6xl"
+                    onClick={() => setLiked(true)}
+                  />
                 )}
               </div>
             </div>

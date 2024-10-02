@@ -72,5 +72,6 @@
     "react": {
       "version": "detect"
     }
-  }
+  },
+  "eslintIgnore": ["next.config.mjs", "postcss.config.mjs"]
 }
