@@ -13,6 +13,7 @@ export default function MovieHome(): JSX.Element {
   const { city } = useContext(SettingsContext)
   const { isLoading, isError, data: movies } = useMovies({ city })
   const [liked, setLiked] = useState(false)
+  const [isCursorLoading, setIsCursorLoading] = useState(false)
 
   const router = useRouter()
 
@@ -22,6 +23,11 @@ export default function MovieHome(): JSX.Element {
 
   if (isError) {
     return <div>Error loading movies.</div>
+  }
+
+  const getMovieDetails = (uuid: string): void => {
+    setIsCursorLoading(true)
+    router.push('/movies/' + uuid)
   }
 
   return (
@@ -78,8 +84,11 @@ export default function MovieHome(): JSX.Element {
               </div>
 
               <Button
-                className="w-1/4 flex flex-col justify-center text-center"
-                onClick={() => router.push('/movies/' + movie.uuid)}
+                className={
+                  'w-1/4 flex flex-col justify-center text-center ' +
+                  (isCursorLoading ? 'cursor-wait' : 'cursor-default')
+                }
+                onClick={() => getMovieDetails(movie.uuid)}
               >
                 More
               </Button>

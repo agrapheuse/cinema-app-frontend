@@ -6,9 +6,12 @@ import CityCountrySelect from '@/components/CityCountrySelect'
 import SettingsContext from '@/contexts/SettingsContext'
 import { Button } from '@/components/ui/button'
 import { FaRegCircleUser } from 'react-icons/fa6'
-//import { quicksand } from "@/app/layout";
+import { useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 
 export default function Home(): JSX.Element {
+  const { data: session } = useSession()
+
   const [chosenCountry, setChosenCountry] = useState('')
   const [chosenCity, setChosenCity] = useState('')
 
@@ -26,16 +29,27 @@ export default function Home(): JSX.Element {
     router.push('/movies')
   }
 
+  const profilePage = (): void => {
+    if (session) {
+      router.push('/auth/profile')
+    } else {
+      signIn()
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <div className="absolute top-4 right-4">
-        <FaRegCircleUser className="text-4xl text-gray-200" />
+        <FaRegCircleUser
+          className="text-4xl text-gray-200"
+          onClick={profilePage}
+        />
       </div>
 
       <div className="text-center mb-12">
         <h1 className="font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
           <span className="text-4xl block">Welcome to</span>
-          <span className="text-6xl block">Cinema App</span>
+          <span className="text-6xl block">CineTracker</span>
         </h1>
       </div>
 
