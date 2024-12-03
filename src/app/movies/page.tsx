@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import SettingsContext from '@/contexts/SettingsContext'
 import { useMovies } from '@/hooks/CustomHooks'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useContext, useState } from 'react'
@@ -14,6 +15,8 @@ export default function MovieHome(): JSX.Element {
   const { isLoading, isError, data: movies } = useMovies({ city })
   const [liked, setLiked] = useState(false)
   const [isCursorLoading, setIsCursorLoading] = useState(false)
+
+  const { data: session } = useSession()
 
   const router = useRouter()
 
@@ -92,19 +95,21 @@ export default function MovieHome(): JSX.Element {
               >
                 More
               </Button>
-              <div className="w-1/4 flex items-center ml-4">
-                {liked ? (
-                  <FaHeart
-                    className="text-red-500 text-6xl"
-                    onClick={() => setLiked(false)}
-                  />
-                ) : (
-                  <FaRegHeart
-                    className="text-gray-800 text-6xl"
-                    onClick={() => setLiked(true)}
-                  />
-                )}
-              </div>
+              {session && (
+                <div className="w-1/4 flex items-center ml-4">
+                  {liked ? (
+                    <FaHeart
+                      className="text-red-500 text-6xl"
+                      onClick={() => setLiked(false)}
+                    />
+                  ) : (
+                    <FaRegHeart
+                      className="text-gray-800 text-6xl"
+                      onClick={() => setLiked(true)}
+                    />
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
