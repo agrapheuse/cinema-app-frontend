@@ -1,85 +1,119 @@
-"use client"
+'use client'
 
-import { useMovies } from "@/hooks/CustomHooks";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { FaCog, FaUserCircle } from "react-icons/fa";
+import { Button } from '@/components/ui/button'
+import SettingsContext from '@/contexts/SettingsContext'
+import { useMovies } from '@/hooks/CustomHooks'
+import { useSession } from 'next-auth/react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useContext, useState } from 'react'
+import { FaCog, FaUserCircle } from 'react-icons/fa'
+import { FaRegHeart, FaHeart } from 'react-icons/fa'
 
-export default function MovieHome() {
-  const { isLoading, isError, movies } = useMovies();
+export default function MovieHome(): JSX.Element {
+  const { city } = useContext(SettingsContext)
+  const { isLoading, isError, data: movies } = useMovies({ city })
+  const [liked, setLiked] = useState(false)
+  const [isCursorLoading, setIsCursorLoading] = useState(false)
 
-  const router = useRouter();
+  const { data: session } = useSession()
+
+  const router = useRouter()
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   if (isError) {
-    return <div>Error loading movies.</div>;
+    return <div>Error loading movies.</div>
+  }
+
+  const getMovieDetails = (uuid: string): void => {
+    setIsCursorLoading(true)
+    router.push('/movies/' + uuid)
   }
 
   return (
     <div>
       <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <div className="text-xl" onClick={() => router.push("/settings")}>
-        <FaCog />
-      </div>
+        <div className="text-xl" onClick={() => router.push('/settings')}>
+          <FaCog />
+        </div>
 
-      <h1 className="text-2xl font-bold">Movies</h1>
+        <h1 className="text-2xl font-bold">Movies</h1>
 
-      <div className="text-xl">
-        <FaUserCircle />
-      </div>
-    </nav>
+        <div className="text-xl">
+          <FaUserCircle />
+        </div>
+      </nav>
 
-    <div className="container mx-auto p-4">
-      <div className="space-y-4">
-        {movies?.map((movie) => (
-          <div
-            key={movie.uuid}
-            className="bg-white rounded-lg shadow-md p-4 flex justify-between items-center"
-          >
-            <div className="w-1/4 pr-4">
-              <Image
-                src={movie.imageUrl}
-                alt={movie.title || ""}
-                width={500} 
-                height={192}     
-                className="w-full h-48 object-cover rounded-md"
-              />
-            </div>
+      <div className="container mx-auto p-4">
+        <div className="space-y-4">
+          {movies?.map((movie) => (
+            <div
+              key={movie.uuid}
+              className="relative bg-white rounded-lg shadow-md p-4 flex justify-between items-center"
+            >
+              <div className="w-1/4 pr-4">
+                <Image
+                  src={movie.imageUrl}
+                  alt={movie.title || ''}
+                  width={100}
+                  height={100}
+                  className="w-full h-40 object-cover rounded-md"
+                />
+              </div>
 
-            <div className="w-1/2">
-              <h2 className="text-xl font-semibold mb-1">{movie.title}</h2>
-              <p className="text-gray-600 mb-1">{movie.director}</p>
-              <p className="text-gray-600 mb-1">{movie.category}</p>
-              <p className="text-gray-600 mb-2">{movie.description}</p>
-            </div>
+              <div className="w-1/4 flex flex-col justify-center text-left pl-4">
+                <p className="text-sm text-gray-500 mb-0.5">
+                  {new Date(movie.dateTime).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+                <p className="text-sm text-gray-500 mb-0.5">
+                  {new Date(movie.dateTime).toLocaleDateString('en-US', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: false,
+                  })}
+                </p>
 
-            <div className="w-1/4 flex flex-col items-end">
-              <a
-                href={movie.infoLink}
-                target="_blank"
-                className="text-blue-500 hover:underline mb-2"
-                rel="noopener noreferrer"
+                <h2 className="text-xl font-semibold mb-0.5 text-gray-800">
+                  {movie.title}
+                </h2>
+                <p className="text-gray-600 mb-0.5">{movie.director}</p>
+              </div>
+
+              <Button
+                className={
+                  'w-1/4 flex flex-col justify-center text-center ' +
+                  (isCursorLoading ? 'cursor-wait' : 'cursor-default')
+                }
+                onClick={() => getMovieDetails(movie.uuid)}
               >
-                More Info
-              </a>
-              {movie.ticketLink && (
-                <a
-                  href={movie.ticketLink}
-                  target="_blank"
-                  className="text-green-500 hover:underline"
-                  rel="noopener noreferrer"
-                >
-                  Buy Tickets
-                </a>
+                More
+              </Button>
+              {session && (
+                <div className="w-1/4 flex items-center ml-4">
+                  {liked ? (
+                    <FaHeart
+                      className="text-red-500 text-6xl"
+                      onClick={() => setLiked(false)}
+                    />
+                  ) : (
+                    <FaRegHeart
+                      className="text-gray-800 text-6xl"
+                      onClick={() => setLiked(true)}
+                    />
+                  )}
+                </div>
               )}
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
-    </div>
-  );
+  )
 }

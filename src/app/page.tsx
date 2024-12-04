@@ -1,98 +1,75 @@
-"use client";
+'use client'
 
-import { useContext, useState } from "react";
-import CountryContext from "@/contexts/CountryContext";
-import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import CityCountrySelect from '@/components/CityCountrySelect'
+import SettingsContext from '@/contexts/SettingsContext'
+import { Button } from '@/components/ui/button'
+import { FaRegCircleUser } from 'react-icons/fa6'
+import { useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 
-export default function Home() {
-  const [chosenCountry, setChosenCountry] = useState("");
-  const [chosenCity, setChosenCity] = useState("");
+export default function Home(): JSX.Element {
+  const { data: session } = useSession()
 
-  const { setCountry, setCity } = useContext(CountryContext);
+  const [chosenCountry, setChosenCountry] = useState('')
+  const [chosenCity, setChosenCity] = useState('')
 
-  const router = useRouter();
+  const { setCountry, setCity } = useContext(SettingsContext)
 
-  const countries = [{ name: "Belgium", cities: ["Antwerp", "Brussels"] }];
+  const router = useRouter()
 
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setChosenCountry(e.target.value);
-    setChosenCity(""); 
-  };
+  useEffect(() => {
+    router.prefetch('/movies')
+  }, [router])
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setChosenCity(e.target.value);
-  };
+  const handleExploreClick = (): void => {
+    setCountry(chosenCountry)
+    setCity(chosenCity)
+    router.push('/movies')
+  }
 
-  const handleExploreClick = () => {
-    setCountry(chosenCountry);
-    setCity(chosenCity);
-    router.push('/movies');
-  };
-
+  const profilePage = (): void => {
+    if (session) {
+      router.push('/auth/profile')
+    } else {
+      signIn()
+    }
+  }
 
   return (
-    <div className="p-8 font-sans">
-      <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1] hidden md:block">
-        <span className="block">Welcome to</span>
-        <span className="block">Cinema App</span>
-      </h1>
-      <div className="mt-5">
-        <label
-          htmlFor="country-select"
-          className="block text-lg font-medium mb-2"
-        >
-          Choose a country:
-        </label>
-        <select
-          id="country-select"
-          value={chosenCountry}
-          onChange={handleCountryChange}
-          className="border border-gray-300 rounded p-2 w-full"
-        >
-          <option value="">-- Select Country --</option>
-          {countries.map((c) => (
-            <option key={c.name} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="absolute top-4 right-4">
+        <FaRegCircleUser
+          className="text-4xl text-gray-200"
+          onClick={profilePage}
+        />
       </div>
 
-      {chosenCountry && (
-        <div className="mt-5">
-          <label
-            htmlFor="city-select"
-            className="block text-lg font-medium mb-2"
-          >
-            Choose a city:
-          </label>
-          <select
-            id="city-select"
-            value={chosenCity}
-            onChange={handleCityChange}
-            className="border border-gray-300 rounded p-2 w-full"
-          >
-            <option value="">-- Select City --</option>
-            {countries
-              .find((c) => c.name === chosenCountry)
-              ?.cities.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-          </select>
-        </div>
-      )}
+      <div className="text-center mb-12">
+        <h1 className="font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
+          <span className="text-4xl block">Welcome to</span>
+          <span className="text-6xl block">CineTracker</span>
+        </h1>
+      </div>
+
+      <CityCountrySelect
+        chosenCountry={chosenCountry}
+        setChosenCountry={setChosenCountry}
+        chosenCity={chosenCity}
+        setChosenCity={setChosenCity}
+        hideCityButton={true}
+      />
 
       {chosenCountry && chosenCity && (
-        <div className="mt-5">
+        <div className="absolute bottom-40 flex flex-col items-center mt-12">
           <p className="text-lg">
-          <button className="border border-gray-300 p-2 rounded" onClick={handleExploreClick}>
+            <Button variant="secondary" onClick={handleExploreClick}>
               Explore Films
-            </button>
+            </Button>
           </p>
         </div>
       )}
     </div>
-  );
+  )
 }

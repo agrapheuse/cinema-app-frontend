@@ -1,16 +1,21 @@
-"use client";
+'use client'
 
-import { QueryClient, QueryClientProvider } from 'react-query';
-import CountryContextProvider from "@/contexts/CountryContextProvider";
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { SessionProvider } from 'next-auth/react'
+import SettingsContextProvider from '@/contexts/SettingsContextProvider'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
-export default function ClientWrapper({ children }: { children: React.ReactNode }) {
+export default function ClientWrapper({
+  children,
+}: {
+  children: React.ReactNode
+}): JSX.Element {
   return (
-    <QueryClientProvider client={queryClient}>
-      <CountryContextProvider>
-        {children}
-      </CountryContextProvider>
-    </QueryClientProvider>
-  );
+    <SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <SettingsContextProvider>{children}</SettingsContextProvider>
+      </QueryClientProvider>
+    </SessionProvider>
+  )
 }
