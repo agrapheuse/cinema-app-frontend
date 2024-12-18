@@ -1,5 +1,7 @@
+import { Cinema } from '@/types/Cinemas'
 import type { Movie } from '@/types/Movie'
 import axios from 'axios'
+import { User } from 'next-auth'
 
 export const getMovies = async ({
   city,
@@ -24,9 +26,20 @@ export const getCinemas = async ({
   city,
 }: {
   city: string
-}): Promise<string[]> => {
+}): Promise<Cinema[]> => {
   axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
-  const url = `/api/movies/cinemas/${city}`
-  const cinemas = await axios.get<string[]>(url)
+  const url = `/api/cinemas/${city}`
+  const cinemas = await axios.get<Cinema[]>(url)
   return cinemas.data
+}
+
+export const isUser = async ({
+  email,
+}: {
+  email: string
+}): Promise<boolean> => {
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
+  const url = `/api/users/userExists/${email}`
+  const users = await axios.get<boolean>(url)
+  return users.data
 }
