@@ -12,7 +12,6 @@ export default function Profile(): JSX.Element {
     router.push('/')
   }
 
-  // If session data is not available, show loading or redirect to login
   if (!session) {
     return (
       <div className="flex h-screen items-center justify-center">
