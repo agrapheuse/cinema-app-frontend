@@ -42,6 +42,7 @@ const handler = NextAuth({
 
       return token
     },
+    async redirect({ url, baseUrl }) { return baseUrl },
     async session({ session, token }) {
       if (session) {
         session = Object.assign({}, session, {

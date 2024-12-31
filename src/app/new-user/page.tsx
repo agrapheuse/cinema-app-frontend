@@ -4,15 +4,17 @@ import CityCountrySelect from '@/components/CityCountrySelect'
 import SettingsContext from '@/contexts/SettingsContext'
 import { useCinemas } from '@/hooks/CustomHooks'
 import { isUser } from '@/services/DataService'
+import { Cinema } from '@/types/Cinemas'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 export default function NewUser(): JSX.Element {
   const { data: session } = useSession()
 
   const [chosenCountry, setChosenCountry] = useState('')
   const [chosenCity, setChosenCity] = useState('')
+  const [followedCinemas, setFollowedCinemas] = useState<Cinema[]>([])
 
   const { setCountry, setCity } = useContext(SettingsContext)
 
@@ -24,6 +26,13 @@ export default function NewUser(): JSX.Element {
   } = useCinemas({ city: chosenCity })
 
   const router = useRouter()
+
+  const cinemaButtons = useMemo(() => {
+    return (cinemas || []).map((cinema) => ({
+      cinema: cinema,
+      followed: true,
+    }))
+  }, [cinemas])
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -47,8 +56,17 @@ export default function NewUser(): JSX.Element {
   useEffect(() => {
     if (chosenCity) {
       refetch()
+      setFollowedCinemas(cinemas || [])
     }
-  }, [chosenCountry, chosenCity])
+  }, [chosenCity])
+
+  function handleCinemaToggle(cinema: Cinema, followed: boolean): void {
+    if (followed) {
+      setFollowedCinemas(followedCinemas.filter((c) => c.name !== cinema.name))
+    } else {
+      setFollowedCinemas([...followedCinemas, cinema])
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
@@ -67,7 +85,7 @@ export default function NewUser(): JSX.Element {
       />
 
       {chosenCountry && chosenCity && (
-        <div className="absolute bottom-40 flex flex-col items-center mt-12">
+        <div className="bottom-40 flex flex-col items-center mt-12">
           {isLoading ? (
             <div>Loading...</div>
           ) : isError ? (
@@ -75,14 +93,23 @@ export default function NewUser(): JSX.Element {
           ) : (
             <>
               <p>Unselect any cinemas you do not wish to see movies from</p>
-              <ul>
-                {cinemas?.map((cinema: any, index: number) => (
-                  <li key={index} className="my-2">
-                    <div className="text-lg font-semibold">{cinema.name}</div>
-                    <div className="text-sm">{cinema.address}</div>
-                  </li>
+              <div className="flex flex-wrap justify-center gap-4 w-full">
+                {cinemaButtons.map((cinema) => (
+                  <div
+                    key={cinema.cinema.name}
+                    className={`cinema-card p-4 w-72 h-40 rounded-lg shadow-lg transition-transform transform hover:scale-105 bg-white ${cinema.followed ? 'border-2 border-blue-500' : 'border'}`}
+                    onClick={() =>
+                      handleCinemaToggle(cinema.cinema, cinema.followed)
+                    }
+                  >
+                    <div className="cinema-card-content text-center">
+                      <h3 className="cinema-card-title text-lg font-semibold">
+                        {cinema.cinema.name}
+                      </h3>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </>
           )}
         </div>
