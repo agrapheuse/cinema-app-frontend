@@ -33,7 +33,7 @@ export default function Home(): JSX.Element {
     if (session) {
       router.push('/auth/profile')
     } else {
-      signIn('google', { callbackUrl: '/new-user' })
+      signIn('google', { callbackUrl: `${process.env.NEXTAUTH_URL}/new-user` })
     }
   }
 
