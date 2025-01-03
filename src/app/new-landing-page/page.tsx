@@ -2,8 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Cinema } from '@/types/Cinemas'
-import { Movie } from '@/types/Movie'
 import { JSX, useEffect, useState } from 'react'
 import { countries } from '@/utils/countryCity'
 import { useCinemas, useMovies } from '@/hooks/CustomHooks'
@@ -19,6 +17,7 @@ export default function LandingPage(): JSX.Element {
     data: movies,
     refetch: refetchMovies,
   } = useMovies({ city })
+  
   const {
     isLoading: isLoadingCinemas,
     isError: isErrorCinemas,
@@ -27,12 +26,12 @@ export default function LandingPage(): JSX.Element {
   } = useCinemas({ city })
 
   useEffect(() => {
-    refetchMovies
-    refetchCinemas
+    refetchMovies()
+    refetchCinemas()
 
     console.log(cinemas)
     console.log(movies)
-  }, [city])
+  }, [city, refetchMovies, refetchCinemas])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.trim()

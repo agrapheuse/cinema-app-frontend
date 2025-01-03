@@ -4,7 +4,7 @@ export interface Movie {
   director?: string
   category?: string
   description?: string
-  cinema: string
+  cinemaId: string
   dateTime: Date
   imageUrl: string
   infoLink: string
