@@ -7,9 +7,12 @@ import { countries } from '@/utils/countryCity'
 import { useCinemas, useMovies } from '@/hooks/CustomHooks'
 
 export default function LandingPage(): JSX.Element {
-  const [city, setCity] = useState('')
+  const [city, setCity] = useState('Antwerp')
   const [searchTerm, setSearchTerm] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const [cinemaMoviePairs, setCinemaMoviePairs] = useState<
+    Record<string, any[]>
+  >({})
 
   const {
     isLoading: isLoadingMovies,
@@ -17,7 +20,7 @@ export default function LandingPage(): JSX.Element {
     data: movies,
     refetch: refetchMovies,
   } = useMovies({ city })
-  
+
   const {
     isLoading: isLoadingCinemas,
     isError: isErrorCinemas,
@@ -28,9 +31,6 @@ export default function LandingPage(): JSX.Element {
   useEffect(() => {
     refetchMovies()
     refetchCinemas()
-
-    console.log(cinemas)
-    console.log(movies)
   }, [city, refetchMovies, refetchCinemas])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,9 +106,48 @@ export default function LandingPage(): JSX.Element {
             </li>
           ) : (
             movies.map((movie) => (
-              <li key={movie.uuid} className="mb-4 p-4 border rounded-md">
-                <h3 className="text-lg font-semibold">{movie.title}</h3>
-                <p className="text-sm text-gray-600">{movie.description}</p>
+              <li
+                key={movie.id}
+                className="mb-6 p-4 border rounded-md flex flex-col md:flex-row"
+              >
+                {/* Movie Image */}
+                <div className="w-full md:w-1/4 flex-shrink-0">
+                  <img
+                    src={movie.imageUrl || 'https://via.placeholder.com/150'}
+                    alt={movie.title}
+                    className="w-full h-auto rounded-md"
+                  />
+                </div>
+
+                {/* Movie Details */}
+                <div className="flex flex-col justify-between md:ml-6 mt-4 md:mt-0 w-full">
+                  {/* Movie Header */}
+                  <div>
+                    <h3 className="text-xl font-bold">{movie.title}</h3>
+                    <p className="text-sm text-blue-500">{movie.director}</p>
+                    <p className="text-sm text-gray-500">
+                      {'Unknown duration'}
+                    </p>
+                  </div>
+
+                  <p className="mt-2 text-gray-700">{movie.description}</p>
+
+                  <div className="mt-4">
+                    {movie.showings.map((showing, index) => (
+                      <div key={index} className="flex items-center space-x-4">
+                        <p className="text-sm text-gray-700">
+                          {showing.dateTime}
+                        </p>
+                        <a
+                          href={showing.ticketLink}
+                          className="text-sm text-blue-500 hover:underline"
+                        >
+                          {movie.cinema.name}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </li>
             ))
           )}

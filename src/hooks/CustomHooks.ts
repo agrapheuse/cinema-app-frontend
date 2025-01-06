@@ -1,5 +1,5 @@
 import { getCinemas, getMovies } from '@/services/DataService'
-import { Cinema } from '@/types/Cinemas'
+import { Cinema } from '@/types/Cinema'
 import type { Movie } from '@/types/Movie'
 import { useQuery } from 'react-query'
 import type { UseQueryResult } from 'react-query'
