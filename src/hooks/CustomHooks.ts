@@ -1,4 +1,5 @@
 import { getCinemas, getMovies } from '@/services/DataService'
+import { Cinema } from '@/types/Cinema'
 import type { Movie } from '@/types/Movie'
 import { useQuery } from 'react-query'
 import type { UseQueryResult } from 'react-query'
@@ -15,6 +16,8 @@ export function useCinemas({
   city,
 }: {
   city: string
-}): UseQueryResult<string[], Error> {
-  return useQuery(['cinemas'], () => getCinemas({ city }))
+}): UseQueryResult<Cinema[], Error> {
+  return useQuery(['cinemas', city], () => getCinemas({ city }), {
+    enabled: !!city,
+  })
 }
