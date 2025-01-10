@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { JSX, useEffect, useState } from 'react'
+import { JSX, useEffect, useRef, useState } from 'react'
 import { countries } from '@/utils/countryCity'
 import { useCinemas, useMovies } from '@/hooks/CustomHooks'
 import MovieComponent from '@/components/MovieComponent'
@@ -12,6 +12,7 @@ export default function LandingPage(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [numCol, setNumCol] = useState(0)
+  const [currentCol, setCurrentCol] = useState(0)
 
   const {
     isLoading: isLoadingMovies,
@@ -53,6 +54,23 @@ export default function LandingPage(): JSX.Element {
         .flatMap((country) => country.cities)
         .filter((city) => city.toLowerCase().includes(term.toLowerCase())),
     )
+  }
+
+  const handleScroll = (e: React.WheelEvent) => {
+    if (currentCol === 0 && e.deltaY < 0) {
+      return
+    }
+
+    const newCol = e.deltaY > 0 ? currentCol + 4 : currentCol - 4
+    setCurrentCol(newCol)
+
+    setTimeout(() => {
+      const col = document.getElementById('col' + newCol)
+
+      if (col) {
+        col.scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 0)
   }
 
   const handleSetCity = (selectedCity: string) => {
@@ -108,10 +126,10 @@ export default function LandingPage(): JSX.Element {
         {movies === undefined || movies.length === 0 ? (
           <div>No movies available</div>
         ) : (
-          <div className="overflow-x-auto h-[95%] p-2">
+          <div className="overflow-x-auto h-[95%] p-2" onWheel={handleScroll}>
             <div className="grid grid-rows-4 grid-flow-col gap-4">
               {movies.map((m, index) => (
-                <MovieComponent key={m.uuid} movie={m} />
+                <MovieComponent id={'col' + index} key={index} movie={m} />
               ))}
             </div>
           </div>
