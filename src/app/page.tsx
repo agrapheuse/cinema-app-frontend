@@ -1,34 +1,25 @@
 'use client'
 
-import { JSX, useEffect, useRef, useState } from 'react'
+import type { JSX } from 'react'
+import { useEffect, useState } from 'react'
 import { useCinemas, useMovies } from '@/hooks/CustomHooks'
 import MovieComponent from '@/components/MovieComponent'
 import { CinemaButtons } from '@/components/CinemaButtons'
 
 export default function LandingPage(): JSX.Element {
-  const [city, setCity] = useState('Antwerp')
+  const [city] = useState('Antwerp')
   const [currentCol, setCurrentCol] = useState(0)
 
-  const {
-    isLoading: isLoadingMovies,
-    isError: isErrorMovies,
-    data: movies,
-    refetch: refetchMovies,
-  } = useMovies({ city })
+  const { data: movies, refetch: refetchMovies } = useMovies({ city })
 
-  const {
-    isLoading: isLoadingCinemas,
-    isError: isErrorCinemas,
-    data: cinemas,
-    refetch: refetchCinemas,
-  } = useCinemas({ city })
+  const { data: cinemas, refetch: refetchCinemas } = useCinemas({ city })
 
   useEffect(() => {
-    refetchMovies()
-    refetchCinemas()
+    void refetchMovies()
+    void refetchCinemas()
   }, [city, refetchMovies, refetchCinemas])
 
-  const handleScroll = (e: React.WheelEvent) => {
+  const handleScroll = (e: React.WheelEvent): void => {
     if (currentCol === 0 && e.deltaY < 0) {
       return
     }

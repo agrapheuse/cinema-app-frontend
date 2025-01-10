@@ -1,5 +1,5 @@
 import type { Movie } from '@/types/Movie'
-import { JSX } from 'react'
+import type { JSX } from 'react'
 
 const MovieComponent = ({
   id,

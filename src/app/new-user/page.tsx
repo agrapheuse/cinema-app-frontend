@@ -1,13 +1,13 @@
 'use client'
 
 import CityCountrySelect from '@/components/CityCountrySelect'
-import SettingsContext from '@/contexts/SettingsContext'
 import { useCinemas } from '@/hooks/CustomHooks'
 import { isUser } from '@/services/DataService'
-import { Cinema } from '@/types/Cinema'
+import type { Cinema } from '@/types/Cinema'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import type { JSX } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function NewUser(): JSX.Element {
   const { data: session } = useSession()
@@ -15,8 +15,6 @@ export default function NewUser(): JSX.Element {
   const [chosenCountry, setChosenCountry] = useState('')
   const [chosenCity, setChosenCity] = useState('')
   const [followedCinemas, setFollowedCinemas] = useState<Cinema[]>([])
-
-  const { setCountry, setCity } = useContext(SettingsContext)
 
   const {
     isLoading,
@@ -35,7 +33,7 @@ export default function NewUser(): JSX.Element {
   }, [cinemas])
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = async (): Promise<void> => {
       if (session?.user?.email) {
         try {
           const user = await isUser({ email: session.user.email })
@@ -43,22 +41,22 @@ export default function NewUser(): JSX.Element {
             router.push('/')
           }
         } catch (error) {
-          console.error('Error fetching user:', error)
+          void console.error('Error fetching user:', error)
         }
       } else {
         console.log('no session')
       }
     }
 
-    fetchUser()
-  }, [session])
+    void fetchUser()
+  }, [router, session])
 
   useEffect(() => {
     if (chosenCity) {
-      refetch()
+      void refetch()
       setFollowedCinemas(cinemas || [])
     }
-  }, [chosenCity])
+  }, [chosenCity, cinemas, refetch])
 
   function handleCinemaToggle(cinema: Cinema, followed: boolean): void {
     if (followed) {

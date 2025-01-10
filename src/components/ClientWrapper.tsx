@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { SessionProvider } from 'next-auth/react'
 import SettingsContextProvider from '@/contexts/SettingsContextProvider'
+import type { JSX } from 'react'
 
 const queryClient = new QueryClient()
 

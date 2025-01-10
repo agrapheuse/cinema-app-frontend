@@ -1,5 +1,5 @@
-import { Cinema } from '@/types/Cinema'
-import { JSX } from 'react'
+import type { Cinema } from '@/types/Cinema'
+import type { JSX } from 'react'
 import { Button } from './ui/button'
 
 export const CinemaButtons = ({

@@ -1,7 +1,6 @@
-import { Cinema } from '@/types/Cinema'
+import type { Cinema } from '@/types/Cinema'
 import type { Movie } from '@/types/Movie'
 import axios from 'axios'
-import { User } from 'next-auth'
 
 export const getMovies = async ({
   city,
