@@ -5,14 +5,13 @@ import { Input } from '@/components/ui/input'
 import { JSX, useEffect, useState } from 'react'
 import { countries } from '@/utils/countryCity'
 import { useCinemas, useMovies } from '@/hooks/CustomHooks'
+import MovieComponent from '@/components/MovieComponent'
 
 export default function LandingPage(): JSX.Element {
   const [city, setCity] = useState('Antwerp')
   const [searchTerm, setSearchTerm] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
-  const [cinemaMoviePairs, setCinemaMoviePairs] = useState<
-    Record<string, any[]>
-  >({})
+  const [numCol, setNumCol] = useState(0)
 
   const {
     isLoading: isLoadingMovies,
@@ -32,6 +31,13 @@ export default function LandingPage(): JSX.Element {
     refetchMovies()
     refetchCinemas()
   }, [city, refetchMovies, refetchCinemas])
+
+  useEffect(() => {
+    if (movies && movies.length > 0) {
+      const numCol = Math.ceil(movies.slice(0, 9).length / 4)
+      setNumCol(numCol)
+    }
+  }, [movies])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.trim()
@@ -57,7 +63,7 @@ export default function LandingPage(): JSX.Element {
 
   return (
     <div className="flex h-screen">
-      <div className="w-1/3 bg-gray-200 p-4 flex flex-col">
+      <div className="w-[30%] bg-gray-200 p-4 flex flex-col">
         <div className="mb-4">
           <div className="relative">
             <Input
@@ -86,72 +92,30 @@ export default function LandingPage(): JSX.Element {
               </ul>
             </div>
           )}
-          <div className="flex-grow bg-gray-300 rounded-md">
-            Map goes here...
-          </div>
+          <div className="flex-grow bg-gray-300 rounded-md"></div>
         </div>
       </div>
-      <div className="w-2/3 bg-white p-4 overflow-y-auto">
-        <div className="flex flex-row">
+      <div className="w-[70%] bg-white p-4">
+        <div className="flex flex-row flex-wrap">
           {cinemas === undefined || cinemas.length === 0 ? (
-            <div>no cinemas</div>
+            <div>No cinemas</div>
           ) : (
-            cinemas.map((cinema) => <Button>{cinema.name}</Button>)
-          )}
-        </div>
-        <ul>
-          {movies === undefined || movies.length === 0 ? (
-            <li>
-              <h3 className="text-lg font-semibold">No movies available</h3>
-            </li>
-          ) : (
-            movies.map((movie) => (
-              <li
-                key={movie.id}
-                className="mb-6 p-4 border rounded-md flex flex-col md:flex-row"
-              >
-                {/* Movie Image */}
-                <div className="w-full md:w-1/4 flex-shrink-0">
-                  <img
-                    src={movie.imageUrl || 'https://via.placeholder.com/150'}
-                    alt={movie.title}
-                    className="w-full h-auto rounded-md"
-                  />
-                </div>
-
-                {/* Movie Details */}
-                <div className="flex flex-col justify-between md:ml-6 mt-4 md:mt-0 w-full">
-                  {/* Movie Header */}
-                  <div>
-                    <h3 className="text-xl font-bold">{movie.title}</h3>
-                    <p className="text-sm text-blue-500">{movie.director}</p>
-                    <p className="text-sm text-gray-500">
-                      {'Unknown duration'}
-                    </p>
-                  </div>
-
-                  <p className="mt-2 text-gray-700">{movie.description}</p>
-
-                  <div className="mt-4">
-                    {movie.showings.map((showing, index) => (
-                      <div key={index} className="flex items-center space-x-4">
-                        <p className="text-sm text-gray-700">
-                          {showing.dateTime}
-                        </p>
-                        <a
-                          href={showing.ticketLink}
-                          className="text-sm text-blue-500 hover:underline"
-                        >
-                          {movie.cinema.name}
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </li>
+            cinemas.map((cinema) => (
+              <Button key={cinema.uuid}>{cinema.name}</Button>
             ))
           )}
-        </ul>
+        </div>
+        {movies === undefined || movies.length === 0 ? (
+          <div>No movies available</div>
+        ) : (
+          <div className="overflow-x-auto h-[95%] p-2">
+            <div className="grid grid-rows-4 grid-flow-col gap-4">
+              {movies.map((m, index) => (
+                <MovieComponent key={m.uuid} movie={m} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

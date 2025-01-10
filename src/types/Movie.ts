@@ -2,7 +2,7 @@ import { Cinema } from './Cinema'
 import { Showing } from './Showing'
 
 export interface Movie {
-  id: string
+  uuid: string
   title?: string
   director?: string
   category?: string

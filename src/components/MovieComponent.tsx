@@ -1,78 +1,50 @@
-'use client'
-
 import type { Movie } from '@/types/Movie'
-import { useRouter } from 'next/navigation'
-import { IoArrowBackCircleOutline } from 'react-icons/io5'
-import Image from 'next/image'
-import { FaRegHeart } from 'react-icons/fa6'
-import { Button } from './ui/button'
+import { JSX } from 'react'
 
 const MovieComponent = ({ movie }: { movie: Movie }): JSX.Element => {
-  const router = useRouter()
+  const truncatedDescription =
+    movie.description && movie.description.length > 300
+      ? movie.description.slice(0, 300) + '...'
+      : movie.description
 
-  const handleBackClick = (): void => {
-    router.back()
-  }
+  const truncatedShowings =
+    movie.showings && movie.showings.length > 2
+      ? movie.showings.slice(0, 1)
+      : movie.showings
 
   return (
-    <div>
-      <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
-        <div className="text-4xl cursor-pointer" onClick={handleBackClick}>
-          <IoArrowBackCircleOutline />
-        </div>
-
-        <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold">
-          {movie.title}
-        </h1>
-      </nav>
-
-      <div className="flex flex-col sm:flex-row items-start">
-        <div className="sm:w-2/3 mb-4 sm:mb-0 sm:mr-6 pl-6">
-          <div className="flex justify-between items-start mb-4 mt-2">
-            <div className="w-1/3">
-              <p className="text-gray-500 mb-2">
-                {new Date(movie.dateTime).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
-              <h1 className="text-3xl font-bold mb-2">{movie.title}</h1>
-              <p className="italic text-lg">{movie.director}</p>
-            </div>
-            <div className="w-2/3 flex justify-start">
-              <FaRegHeart className="ml-4 mt-12 text-5xl cursor-pointer" />
-            </div>
+    <div className="flex flex-row h-36 w-[45rem]">
+      <img
+        src={movie.imageUrl}
+        alt={movie.title}
+        className="h-36 w-64 object-cover rounded-lg flex-none"
+      />
+      <div className="flex flex-col flex-grow px-4">
+        <h3 className="text-sm font-bold mt-4">{movie.title}</h3>
+        <p className="text- text-blue-600">{movie.director}</p>
+        <p className="block text-xs/[0.7rem] text-gray-700 w-full">
+          {truncatedDescription}
+        </p>
+        <div className="mt-1 space-y-2 flex flex-row">
+          <div>
+            {truncatedShowings.map((showing, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <a
+                  href={showing.ticketLink}
+                  className="text-sm text-blue-500 hover:underline"
+                >
+                  <p className="text-sm text-gray-700">{showing.dateTime}</p>
+                </a>
+              </div>
+            ))}
           </div>
-
-          <p className="text-gray-500 mb-4">
-            Language: {movie.language} &nbsp; Subtitles: {movie.subtitles}
-          </p>
-          <p className="leading-relaxed">{movie.description}</p>
-          <div className="w-1/2">
-            <Button
-              onClick={() => (window.location.href = movie.infoLink)}
-            ></Button>
+          <div className="ml-auto">
+            <img
+              src={movie.cinema.logoUrl}
+              alt={movie.title}
+              className="h-10 object-cover rounded-md"
+            />
           </div>
-          {movie.ticketLink && (
-            <div className="w-1/2">
-              <Button
-                onClick={() => (window.location.href = movie.ticketLink || '')}
-              >
-                Buy Tickets
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div className="sm:w-1/3">
-          <Image
-            src={movie.imageUrl}
-            alt={movie.title ?? ''}
-            width={400}
-            height={300}
-            className="w-[4] h-[3] object-contain rounded-md"
-          />
         </div>
       </div>
     </div>
