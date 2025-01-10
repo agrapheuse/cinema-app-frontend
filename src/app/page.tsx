@@ -1,75 +1,160 @@
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import CityCountrySelect from '@/components/CityCountrySelect'
-import SettingsContext from '@/contexts/SettingsContext'
 import { Button } from '@/components/ui/button'
-import { FaRegCircleUser } from 'react-icons/fa6'
-import { useSession } from 'next-auth/react'
-import { signIn } from 'next-auth/react'
+import { Input } from '@/components/ui/input'
+import { JSX, useEffect, useRef, useState } from 'react'
+import { countries } from '@/utils/countryCity'
+import { useCinemas, useMovies } from '@/hooks/CustomHooks'
+import MovieComponent from '@/components/MovieComponent'
 
-export default function Home(): JSX.Element {
-  const { data: session } = useSession()
+export default function LandingPage(): JSX.Element {
+  const [city, setCity] = useState('Antwerp')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [numCol, setNumCol] = useState(0)
+  const [currentCol, setCurrentCol] = useState(0)
 
-  const [chosenCountry, setChosenCountry] = useState('')
-  const [chosenCity, setChosenCity] = useState('')
+  const {
+    isLoading: isLoadingMovies,
+    isError: isErrorMovies,
+    data: movies,
+    refetch: refetchMovies,
+  } = useMovies({ city })
 
-  const { setCountry, setCity } = useContext(SettingsContext)
-
-  const router = useRouter()
+  const {
+    isLoading: isLoadingCinemas,
+    isError: isErrorCinemas,
+    data: cinemas,
+    refetch: refetchCinemas,
+  } = useCinemas({ city })
 
   useEffect(() => {
-    router.prefetch('/movies')
-  }, [router])
+    refetchMovies()
+    refetchCinemas()
+  }, [city, refetchMovies, refetchCinemas])
 
-  const handleExploreClick = (): void => {
-    setCountry(chosenCountry)
-    setCity(chosenCity)
-    router.push('/movies')
+  useEffect(() => {
+    if (movies && movies.length > 0) {
+      const numCol = Math.ceil(movies.slice(0, 9).length / 4)
+      setNumCol(numCol)
+    }
+  }, [movies])
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value.trim()
+    setSearchTerm(term)
+
+    if (term === '') {
+      setSuggestions([])
+      return
+    }
+
+    setSuggestions(
+      countries
+        .flatMap((country) => country.cities)
+        .filter((city) => city.toLowerCase().includes(term.toLowerCase())),
+    )
   }
 
-  const profilePage = (): void => {
-    if (session) {
-      router.push('/auth/profile')
-    } else {
-      signIn('google', { callbackUrl: '/new-user' })
+  const handleScroll = (e: React.WheelEvent) => {
+    if (currentCol === 0 && e.deltaY < 0) {
+      return
     }
+
+    const newCol = e.deltaY > 0 ? currentCol + 4 : currentCol - 4
+    setCurrentCol(newCol)
+
+    setTimeout(() => {
+      const col = document.getElementById('col' + newCol)
+
+      if (col) {
+        col.scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 0)
+  }
+
+  const handleSetCity = (selectedCity: string) => {
+    setCity(selectedCity)
+    setSearchTerm(selectedCity)
+    setSuggestions([])
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <div className="absolute top-4 right-4">
-        <FaRegCircleUser
-          className="text-4xl text-gray-200"
-          onClick={profilePage}
-        />
-      </div>
-
-      <div className="text-center mb-12">
-        <h1 className="font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]">
-          <span className="text-4xl block">Welcome to</span>
-          <span className="text-6xl block">CineTracker</span>
-        </h1>
-      </div>
-
-      <CityCountrySelect
-        chosenCountry={chosenCountry}
-        setChosenCountry={setChosenCountry}
-        chosenCity={chosenCity}
-        setChosenCity={setChosenCity}
-        hideCityButton={true}
-      />
-
-      {chosenCountry && chosenCity && (
-        <div className="absolute bottom-40 flex flex-col items-center mt-12">
-          <p className="text-lg">
-            <Button variant="secondary" onClick={handleExploreClick}>
-              Explore Films
-            </Button>
-          </p>
+    <div className="flex h-screen">
+      <div className="w-[30%] bg-gray-200 p-4 flex flex-col">
+        <div className="mb-4">
+          <div className="relative">
+            <Input
+              type="search"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="pr-10"
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <SearchIcon className="h-5 w-5 text-muted-foreground" />
+            </div>
+          </div>
+          {suggestions.length > 0 && (
+            <div className="mt-2 rounded-md border bg-background shadow-lg">
+              <ul className="py-1">
+                {suggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleSetCity(suggestion)}
+                    className="cursor-pointer px-4 py-2 hover:bg-muted"
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div className="flex-grow bg-gray-300 rounded-md"></div>
         </div>
-      )}
+      </div>
+      <div className="w-[70%] bg-white p-4">
+        <div className="flex flex-row flex-wrap">
+          {cinemas === undefined || cinemas.length === 0 ? (
+            <div>No cinemas</div>
+          ) : (
+            cinemas.map((cinema) => (
+              <Button key={cinema.uuid}>{cinema.name}</Button>
+            ))
+          )}
+        </div>
+        {movies === undefined || movies.length === 0 ? (
+          <div>No movies available</div>
+        ) : (
+          <div className="overflow-x-auto h-[95%] p-2" onWheel={handleScroll}>
+            <div className="grid grid-rows-4 grid-flow-col gap-4">
+              {movies.map((m, index) => (
+                <MovieComponent id={'col' + index} key={index} movie={m} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
+  )
+}
+
+function SearchIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
   )
 }
