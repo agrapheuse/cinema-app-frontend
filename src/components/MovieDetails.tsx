@@ -1,5 +1,10 @@
+import {
+  getMovieDetails,
+  getMovieId,
+  getMovieImages,
+} from '@/services/DataService'
 import type { Movie } from '@/types/Movie'
-import type { JSX } from 'react'
+import { useEffect, type JSX } from 'react'
 
 export const MovieDetail = ({
   movie,
@@ -8,6 +13,25 @@ export const MovieDetail = ({
   movie: Movie | null
   setMovieDetail: React.Dispatch<React.SetStateAction<Movie | null>>
 }): JSX.Element => {
+  useEffect(() => {
+    const fetchMovieDetails = async (): Promise<void> => {
+      if (!movie?.title) {
+        return
+      }
+
+      try {
+        const id = await getMovieId({ title: movie.title })
+
+        const details = await getMovieDetails({ id: id })
+        const images = await getMovieImages({ id: id })
+      } catch (error) {
+        console.error('Error fetching movie details:', error)
+      }
+    }
+
+    void fetchMovieDetails()
+  }, [movie, setMovieDetail])
+
   return (
     <div className="w-[70%] bg-white flex flex-col">
       <img src={movie?.imageUrl} alt="Movie Background" className="w-max" />
