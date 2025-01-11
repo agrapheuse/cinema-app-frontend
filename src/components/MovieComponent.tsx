@@ -1,5 +1,5 @@
 import type { Movie } from '@/types/Movie'
-import { JSX } from 'react'
+import type { JSX } from 'react'
 
 const MovieComponent = ({
   id,
@@ -23,12 +23,12 @@ const MovieComponent = ({
       <img
         src={movie.imageUrl}
         alt={movie.title}
-        className="h-36 w-64 object-cover rounded-lg flex-none"
+        className="h-36 w-64 object-cover rounded-md flex-none"
       />
       <div className="flex flex-col flex-grow px-4">
         <h3 className="text-sm font-bold">{movie.title}</h3>
         <p className="text-xs text-blue-600">{movie.director}</p>
-        <p className="block text-xs/[0.7rem] text-gray-700 w-full">
+        <p className="block text-xs/[0.7rem] text-gray-700 w-full mt-2">
           {truncatedDescription}
         </p>
         <div className="space-y-2 flex flex-row">

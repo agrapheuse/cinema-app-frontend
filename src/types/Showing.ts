@@ -1,4 +1,4 @@
-import { DateTime } from 'next-auth/providers/kakao'
+import type { DateTime } from 'next-auth/providers/kakao'
 
 export interface Showing {
   id: string

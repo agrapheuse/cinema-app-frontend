@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select'
+import type { JSX } from 'react'
 
 interface CityCountrySelectProps {
   chosenCountry: string

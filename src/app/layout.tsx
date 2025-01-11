@@ -1,6 +1,7 @@
 import { Quicksand } from 'next/font/google'
 import './globals.css'
 import ClientWrapper from '@/components/ClientWrapper'
+import type { JSX } from 'react'
 
 const quicksand = Quicksand({
   subsets: ['latin'],

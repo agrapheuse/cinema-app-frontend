@@ -1,5 +1,5 @@
-import { Cinema } from './Cinema'
-import { Showing } from './Showing'
+import type { Cinema } from './Cinema'
+import type { Showing } from './Showing'
 
 export interface Movie {
   uuid: string

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { ReactNode } from 'react'
+import type { JSX, ReactNode } from 'react'
 import SettingsContext from './SettingsContext'
 import { useLocalStorage } from 'usehooks-ts'
 

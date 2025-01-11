@@ -2,13 +2,14 @@
 
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import type { JSX } from 'react'
 
 export default function Profile(): JSX.Element {
   const router = useRouter()
   const { data: session } = useSession()
 
-  const logOut = (): void => {
-    signOut()
+  const logOut = async (): Promise<void> => {
+    await signOut()
     router.push('/')
   }
 
