@@ -1,6 +1,8 @@
 import type { Cinema } from "@/types/Cinema";
 import type { Movie } from "@/types/Movie";
+import { TMDBBackdrop } from "@/types/TMDB/TMDBBackdrop";
 import { TMDBMovie } from "@/types/TMDB/TMDBMovie";
+import { TMDBQueryResult } from "@/types/TMDB/TMDBQueryResult";
 import axios from "axios";
 
 export const getMovies = async ({
@@ -65,8 +67,10 @@ export const getMovieId = async ({
     }
 
     const data = await response.json();
-    const movieId = data.results[0].id;
-    return +movieId;
+    const filteredData = data.results.filter(
+      (r: TMDBQueryResult) => r.title == title
+    );
+    return filteredData[0].id;
   } catch (err) {
     console.error("Error fetching movie ID:", err);
     throw err;
@@ -94,7 +98,7 @@ export const getMovieDetails = async ({
     }
 
     const data = await response.json();
-    console.log(data);
+    return data;
   } catch (err) {
     console.error("Error fetching movie ID:", err);
     throw err;
@@ -122,7 +126,9 @@ export const getMovieImages = async ({
     }
 
     const data = await response.json();
-    console.log(data);
+    return data.backdrops.map(
+      (b: TMDBBackdrop) => process.env.NEXT_PUBLIC_BACKDROP_URL + b.file_path
+    );
   } catch (err) {
     console.error("Error fetching movie ID:", err);
     throw err;
