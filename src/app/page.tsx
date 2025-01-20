@@ -6,12 +6,15 @@ import { useCinemas, useMovies } from '@/hooks/CustomHooks'
 import MovieComponent from '@/components/MovieComponent'
 import { CinemaButtons } from '@/components/CinemaButtons'
 import type { Movie } from '@/types/Movie'
+import { MovieDetail } from '@/components/MovieDetails'
 
 export default function LandingPage(): JSX.Element {
   const [city] = useState('Antwerp')
   const [currentCol, setCurrentCol] = useState(0)
   const [preferredCinemas, setPreferredCinemas] = useState<string[]>([])
-  const [movieDetail, setMovieDetail] = useState<Movie | null>(null)
+  const [movieDetail, setMovieDetail] = useState<Movie | null>(() =>
+    JSON.parse(localStorage.getItem('movieDetail') ?? 'null'),
+  )
 
   const { data: movies, refetch: refetchMovies } = useMovies({ city })
 
@@ -27,6 +30,14 @@ export default function LandingPage(): JSX.Element {
       setPreferredCinemas(cinemas.map((c) => c.uuid).filter(Boolean))
     }
   }, [cinemas])
+
+  useEffect(() => {
+    if (movieDetail) {
+      localStorage.setItem('movieDetail', JSON.stringify(movieDetail))
+    } else {
+      localStorage.removeItem('movieDetail')
+    }
+  }, [movieDetail])
 
   const handleScroll = (e: React.WheelEvent): void => {
     if (currentCol === 0 && e.deltaY < 0) {
@@ -69,14 +80,19 @@ export default function LandingPage(): JSX.Element {
             >
               <div className="grid grid-rows-4 grid-flow-col gap-4">
                 {filteredMovies.map((m, index) => (
-                  <MovieComponent id={'col' + index} key={index} movie={m} />
+                  <MovieComponent
+                    id={'col' + index}
+                    key={index}
+                    movie={m}
+                    setMovieDetail={setMovieDetail}
+                  />
                 ))}
               </div>
             </div>
           )}
         </div>
       ) : (
-        <></>
+        <MovieDetail movie={movieDetail} setMovieDetail={setMovieDetail} />
       )}
     </div>
   )
