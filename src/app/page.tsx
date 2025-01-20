@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { Movie } from "@/types/Movie";
 import { MovieDetail } from "@/components/MovieDetails";
 import { MovieGrid } from "@/components/MovieGrid";
+import { LeftColumn } from "@/components/LeftColumn";
 
 export default function LandingPage(): JSX.Element {
   const [movieDetail, setMovieDetail] = useState<Movie | null>(() =>
@@ -21,7 +22,7 @@ export default function LandingPage(): JSX.Element {
 
   return (
     <div className="flex h-screen">
-      <div className="w-[30%] bg-gray-200 p-4 flex flex-col"></div>
+      <LeftColumn />
       {movieDetail === null ? (
         <MovieGrid setMovieDetail={setMovieDetail} />
       ) : (
