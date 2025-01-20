@@ -27,22 +27,24 @@ export const MovieDetail = ({
         const id = await getMovieId({ title: movie.title });
 
         const details = await getMovieDetails({ id: id });
-        const images = await getMovieImages({ id: id });
+        const movieImages = await getMovieImages({ id: id });
 
         setMovieDetails(details);
-        setImages(images);
+        setImages(movieImages);
       } catch (error) {
         console.error("Error fetching movie details:", error);
       }
     };
 
     void fetchMovieDetails();
+
+    console.log(images);
   }, [movie]);
 
   return (
     <div className="w-[70%] bg-white flex flex-col">
       <img
-        src={movie?.imageUrl}
+        src={images[0]}
         alt="Movie Background"
         className="w-full h-96 object-cover"
       />
