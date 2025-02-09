@@ -4,9 +4,11 @@ import type { JSX } from 'react'
 const MovieComponent = ({
   id,
   movie,
+  setMovieDetail,
 }: {
   id: string
   movie: Movie
+  setMovieDetail: React.Dispatch<React.SetStateAction<Movie | null>>
 }): JSX.Element => {
   const truncatedDescription =
     movie.description && movie.description.length > 340
@@ -19,7 +21,11 @@ const MovieComponent = ({
       : movie.showings
 
   return (
-    <div className="flex flex-row h-36 w-[45rem]" id={id}>
+    <div
+      className="flex flex-row h-36 w-[45rem] cursor-pointer"
+      id={id}
+      onClick={() => setMovieDetail(movie)}
+    >
       <img
         src={movie.imageUrl}
         alt={movie.title}

@@ -1,5 +1,5 @@
-import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -12,9 +12,9 @@ const handler = NextAuth({
       },
       authorization: {
         params: {
-          prompt: 'consent',
-          access_type: 'offline',
-          response_type: 'code',
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
         },
       },
     }),
@@ -25,38 +25,38 @@ const handler = NextAuth({
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
               Authorization: `Bearer ${account?.id_token}`,
             },
           },
-        )
-        const resParsed = await res.json()
+        );
+        const resParsed = await res.json();
         token = Object.assign({}, token, {
           id_token: account.id_token,
-        })
+        });
         token = Object.assign({}, token, {
           myToken: resParsed.authToken,
-        })
+        });
       }
 
-      return token
+      return token;
     },
-    async redirect({ url, baseUrl }) {
-      return baseUrl + '/new-user'
-    },
+    // async redirect({ url, baseUrl }) {
+    //   return baseUrl + '/new-user'
+    // },
     async session({ session, token }) {
       if (session) {
         session = Object.assign({}, session, {
           id_token: token.id_token,
-        })
+        });
         session = Object.assign({}, session, {
           authToken: token.myToken,
-        })
+        });
       }
-      return session
+      return session;
     },
   },
-})
+});
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
