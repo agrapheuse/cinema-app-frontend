@@ -1,8 +1,16 @@
 import { JSX } from "react";
 import Image from "next/image";
 import { Separator } from "./ui/separator";
+import { signOut, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 export const LeftColumn = ({}: {}): JSX.Element => {
+  const { data: session } = useSession();
+
+  const logOut = async (): Promise<void> => {
+    await signOut();
+  };
+
   return (
     <div className="w-[30%] bg-gray-200 p-4 flex flex-col">
       <div className="text-center mb-4">
@@ -15,11 +23,13 @@ export const LeftColumn = ({}: {}): JSX.Element => {
         />
       </div>
       <div className="flex flex-row">
-        <p className="mx-3">HOME</p>
-        <p className="mx-3">CALENDAR</p>
-        <p className="mx-3">NEWS</p>
-        <p className="mx-3">ABOUT</p>
-        <p className="mx-3">CONTACT</p>
+        <p className="mx-3 hover:underline cursor-pointer font-bold">HOME</p>
+        <p className="mx-3 hover:underline cursor-pointer font-bold">
+          CALENDAR
+        </p>
+        <p className="mx-3 hover:underline cursor-pointer font-bold">NEWS</p>
+        <p className="mx-3 hover:underline cursor-pointer font-bold">ABOUT</p>
+        <p className="mx-3 hover:underline cursor-pointer font-bold">CONTACT</p>
       </div>
 
       <Separator className="my-4 bg-black" />
@@ -27,44 +37,57 @@ export const LeftColumn = ({}: {}): JSX.Element => {
       <div className="mb-4 flex flex-row">
         <span className="block font-bold mr-4">ZONES:</span>
         <ul className="flex space-x-4">
-          <li className="cursor-pointer">BRUXELLES</li>
-          <li className="cursor-pointer">ANVERS</li>
-          <li className="cursor-pointer">MONS</li>
+          <li className="cursor-pointer hover:underline">BRUXELLES</li>
+          <li className="cursor-pointer hover:underline">ANVERS</li>
+          <li className="cursor-pointer hover:underline">MONS</li>
         </ul>
       </div>
 
       <Separator className="my-4 bg-black" />
 
-      <div className="flex items-center justify-between mx-3">
-        <span>👤 YUNG-PICASSO</span>
-        <div className="flex items-center space-x-2">
-          <button className="text-blue-500">DÉCONNEXION</button>
-          <button className="text-gray-500">⚙️</button>
-        </div>
-      </div>
+      {session ? (
+        <>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Image
+                src={session.user?.image || ""}
+                alt="profile"
+                width={25}
+                height={25}
+                className="rounded-full"
+              />
+              <span>{session.user?.name}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                className="font-bold hover:underline"
+                onClick={() => logOut}
+              >
+                LOG OUT
+              </button>
+            </div>
+          </div>
 
-      <div className="mb-4">
-        <span className="block font-bold mb-2">MES SÉANCES</span>
-        <table className="table-auto w-full text-sm">
-          <tbody>
-            <tr>
-              <td>AMORES PERROS</td>
-              <td>13.01 - 19:00</td>
-              <td>RICTS</td>
-            </tr>
-            <tr>
-              <td>ALL SHALL BE WELL</td>
-              <td>15.01 - 21:00</td>
-              <td>GALERIES</td>
-            </tr>
-            <tr>
-              <td>RED ROAD</td>
-              <td>15.01 - 17:00</td>
-              <td>FLAGEY</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <div className="my-4 border-2 border-black p-2">
+            <span className="block font-bold mb-2">MES SÉANCES</span>
+            <table className="table-auto w-full text-sm">
+              <tbody></tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col">
+          <button className="self-end" onClick={() => signIn()}>
+            LOG IN
+          </button>
+          <div className="flex flex-col my-4 border-2 border-black p-2">
+            <span className="text-sm">MY VIEWINGS</span>
+            <span className="text-xs">
+              You have to be logged in to save views to your calendar
+            </span>
+          </div>
+        </div>
+      )}
 
       <footer className="text-xs text-gray-500 mt-auto">
         <p>
