@@ -61,7 +61,7 @@ export const LeftColumn = ({}: {}): JSX.Element => {
             <div className="flex items-center space-x-2">
               <button
                 className="font-bold hover:underline"
-                onClick={() => logOut}
+                onClick={() => logOut()}
               >
                 LOG OUT
               </button>
