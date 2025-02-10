@@ -25,6 +25,7 @@
     "target": "ES2017"
   },
   "include": [
+    "next-auth.d.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

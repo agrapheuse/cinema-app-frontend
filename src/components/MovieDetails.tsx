@@ -27,7 +27,9 @@ export const MovieDetail = ({
         const id = await getMovieId({ title: movie.title });
 
         const details = await getMovieDetails({ id: id });
-        const movieImages = await getMovieImages({ id: id });
+        const movieImages = await getMovieImages({ id: id }).then((images) =>
+          images.slice(0, 6),
+        );
 
         setMovieDetails(details);
         setImages(movieImages);
@@ -37,9 +39,11 @@ export const MovieDetail = ({
     };
 
     void fetchMovieDetails();
-
-    console.log(images);
   }, [movie]);
+
+  const likeShowing = (id: string) => {
+    console.log("like showing" + id);
+  };
 
   return (
     <div className="w-[70%] bg-white flex flex-col">
@@ -73,8 +77,11 @@ export const MovieDetail = ({
           <h2 className="text-xl font-semibold">Showing(s)</h2>
           <ul className="mt-4 space-y-4">
             {movie?.showings.map((s) => (
-              <li key={s.dateTime} className="flex items-center">
-                <input type="radio" name="availability" className="mr-4" />
+              <li key={s.id} className="flex items-center">
+                <button
+                  className="w-4 h-4 mr-2 rounded-full border-2 border-black bg-transparent hover:bg-black hover:text-white transition-colors"
+                  onClick={() => likeShowing(s.id)}
+                ></button>
                 <div className="flex-1">
                   <span>{s.dateTime}</span> · <span>{s.dateTime}</span>
                 </div>
