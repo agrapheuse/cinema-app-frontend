@@ -4,6 +4,7 @@ import { TMDBBackdrop } from "@/types/TMDB/TMDBBackdrop";
 import { TMDBMovie } from "@/types/TMDB/TMDBMovie";
 import { TMDBQueryResult } from "@/types/TMDB/TMDBQueryResult";
 import axios from "axios";
+import { LikedShowing } from "@/types/Showing";
 
 export const getMovies = async ({
   city,
@@ -62,10 +63,6 @@ export const getMovieId = async ({
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
     const data = await response.json();
     const filteredData = data.results.filter(
       (r: TMDBQueryResult) => r.title == title,
@@ -93,9 +90,6 @@ export const getMovieDetails = async ({
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
 
     return await response.json();
   } catch (err) {
@@ -120,9 +114,6 @@ export const getMovieImages = async ({
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
 
     const data = await response.json();
     return data.backdrops.map(
@@ -148,4 +139,15 @@ export const likeShowing = async ({
     showingId,
   };
   await axios.post(url, body);
+};
+
+export const getUserLikes = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<LikedShowing[]> => {
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const url = `/api/users/${userId}/likes`;
+  const likes = await axios.get<LikedShowing[]>(url);
+  return likes.data;
 };

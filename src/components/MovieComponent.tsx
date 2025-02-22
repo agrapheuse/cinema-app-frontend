@@ -1,24 +1,24 @@
-import type { Movie } from '@/types/Movie'
-import type { JSX } from 'react'
+import type { Movie } from "@/types/Movie";
+import type { JSX } from "react";
 
 const MovieComponent = ({
   id,
   movie,
   setMovieDetail,
 }: {
-  id: string
-  movie: Movie
-  setMovieDetail: React.Dispatch<React.SetStateAction<Movie | null>>
+  id: string;
+  movie: Movie;
+  setMovieDetail: React.Dispatch<React.SetStateAction<Movie | null>>;
 }): JSX.Element => {
   const truncatedDescription =
     movie.description && movie.description.length > 340
-      ? movie.description.slice(0, 340) + '...'
-      : movie.description
+      ? movie.description.slice(0, 340) + "..."
+      : movie.description;
 
   const truncatedShowings =
     movie.showings && movie.showings.length > 2
       ? movie.showings.slice(0, 1)
-      : movie.showings
+      : movie.showings;
 
   return (
     <div
@@ -45,7 +45,9 @@ const MovieComponent = ({
                   href={showing.ticketLink}
                   className="text-sm text-blue-500 hover:underline"
                 >
-                  <p className="text-sm text-gray-700">{showing.dateTime}</p>
+                  <p className="text-sm text-gray-700">
+                    {showing.dateTime.toString()}
+                  </p>
                 </a>
               </div>
             ))}
@@ -60,7 +62,7 @@ const MovieComponent = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MovieComponent
+export default MovieComponent;

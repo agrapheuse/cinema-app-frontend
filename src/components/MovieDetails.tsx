@@ -20,7 +20,6 @@ export const MovieDetail = ({
   const [movieDetails, setMovieDetails] = useState<TMDBMovie | null>(null);
 
   const { data: session } = useSession();
-  console.log(session);
 
   useEffect(() => {
     const fetchMovieDetails = async (): Promise<void> => {
@@ -47,6 +46,7 @@ export const MovieDetail = ({
   }, [movie]);
 
   const addShowingToCalendar = (showing: string): void => {
+    // @ts-ignore
     likeShowing({ userId: session?.user?.id, showingId: showing });
   };
 

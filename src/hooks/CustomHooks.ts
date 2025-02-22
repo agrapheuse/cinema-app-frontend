@@ -1,8 +1,9 @@
-import { getCinemas, getMovies } from "@/services/DataService";
+import { getCinemas, getMovies, getUserLikes } from "@/services/DataService";
 import type { Cinema } from "@/types/Cinema";
 import type { Movie } from "@/types/Movie";
 import { useQuery } from "react-query";
 import type { UseQueryResult } from "react-query";
+import { LikedShowing } from "@/types/Showing";
 
 export function useMovies({
   city,
@@ -19,5 +20,15 @@ export function useCinemas({
 }): UseQueryResult<Cinema[], Error> {
   return useQuery(["cinemas", city], () => getCinemas({ city }), {
     enabled: !!city,
+  });
+}
+
+export function useUserLikes({
+  userId,
+}: {
+  userId: string;
+}): UseQueryResult<LikedShowing[], Error> {
+  return useQuery(["likes", userId], () => getUserLikes({ userId }), {
+    enabled: !!userId,
   });
 }
