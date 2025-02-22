@@ -1,5 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
+import { User } from "@/types/User";
+import { getUser } from "@/services/AuthService";
 
 const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -20,7 +22,7 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, account }: { token: any; account: any }) {
       if (account) {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -45,15 +47,14 @@ const handler = NextAuth({
     // async redirect({ url, baseUrl }) {
     //   return baseUrl + '/new-user'
     // },
-    async session({ session, token }) {
-      if (session) {
-        session = Object.assign({}, session, {
-          id_token: token.id_token,
-        });
-        session = Object.assign({}, session, {
-          authToken: token.myToken,
-        });
-      }
+    async session({ session }: { session: any }) {
+      const user: User = await getUser({ email: session.user.email ?? "" });
+
+      session.user = {
+        ...session.user,
+        id: user.uuid,
+      };
+
       return session;
     },
   },

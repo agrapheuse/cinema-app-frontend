@@ -3,9 +3,15 @@ import Image from "next/image";
 import { Separator } from "./ui/separator";
 import { signOut, useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
+import { useUserLikes } from "@/hooks/CustomHooks";
 
 export const LeftColumn = ({}: {}): JSX.Element => {
   const { data: session } = useSession();
+
+  //needs to be fixed
+  // @ts-ignore
+  const { data: likes } = useUserLikes({ userId: session?.user?.id || "" });
+  console.log(likes);
 
   const logOut = async (): Promise<void> => {
     await signOut();
@@ -61,17 +67,36 @@ export const LeftColumn = ({}: {}): JSX.Element => {
             <div className="flex items-center space-x-2">
               <button
                 className="font-bold hover:underline"
-                onClick={() => logOut}
+                onClick={() => logOut()}
               >
                 LOG OUT
               </button>
             </div>
           </div>
 
-          <div className="my-4 border-2 border-black p-2">
-            <span className="block font-bold mb-2">MES SÉANCES</span>
+          <div className="my-4 border border-black">
             <table className="table-auto w-full text-sm">
-              <tbody></tbody>
+              <thead>
+                <tr>
+                  <th className="block font-bold my-2">MY VIEWINGS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {likes?.map((like) => (
+                  <tr
+                    key={like.id}
+                    className="border-black border-t transition hover:bg-black hover:text-gray-200"
+                  >
+                    <td className="m-2">{like.movie.title}</td>
+                    <td className="m-2">
+                      {new Date(like.dateTime).toLocaleDateString() +
+                        " - " +
+                        new Date(like.dateTime).toLocaleTimeString()}
+                    </td>
+                    <td className="m-2">{like.movie.cinema.name}</td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </>
