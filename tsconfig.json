@@ -25,6 +25,7 @@
     "target": "ES2017"
   },
   "include": [
+    "src/types/*.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

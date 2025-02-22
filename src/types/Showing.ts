@@ -1,8 +1,16 @@
-import type { DateTime } from 'next-auth/providers/kakao'
+import { Movie } from "@/types/Movie";
 
 export interface Showing {
-  id: string
-  dateTime: DateTime
-  infoLink: string
-  ticketLink?: string
+  id: string;
+  dateTime: Date;
+  infoLink: string;
+  ticketLink?: string;
+}
+
+export interface LikedShowing {
+  id: string;
+  dateTime: Date;
+  infoLink: string;
+  ticketLink?: string;
+  movie: Movie;
 }

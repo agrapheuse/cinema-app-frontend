@@ -4,6 +4,7 @@ import { TMDBBackdrop } from "@/types/TMDB/TMDBBackdrop";
 import { TMDBMovie } from "@/types/TMDB/TMDBMovie";
 import { TMDBQueryResult } from "@/types/TMDB/TMDBQueryResult";
 import axios from "axios";
+import { LikedShowing } from "@/types/Showing";
 
 export const getMovies = async ({
   city,
@@ -62,13 +63,9 @@ export const getMovieId = async ({
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
     const data = await response.json();
     const filteredData = data.results.filter(
-      (r: TMDBQueryResult) => r.title == title
+      (r: TMDBQueryResult) => r.title == title,
     );
     return filteredData[0].id;
   } catch (err) {
@@ -93,12 +90,8 @@ export const getMovieDetails = async ({
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (err) {
     console.error("Error fetching movie ID:", err);
     throw err;
@@ -121,16 +114,40 @@ export const getMovieImages = async ({
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
 
     const data = await response.json();
     return data.backdrops.map(
-      (b: TMDBBackdrop) => process.env.NEXT_PUBLIC_BACKDROP_URL + b.file_path
+      (b: TMDBBackdrop) => process.env.NEXT_PUBLIC_BACKDROP_URL + b.file_path,
     );
   } catch (err) {
     console.error("Error fetching movie ID:", err);
     throw err;
   }
+};
+
+export const likeShowing = async ({
+  userId,
+  showingId,
+}: {
+  userId: string;
+  showingId: string;
+}): Promise<void> => {
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const url = `/api/users/like`;
+  const body = {
+    userId,
+    showingId,
+  };
+  await axios.post(url, body);
+};
+
+export const getUserLikes = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<LikedShowing[]> => {
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+  const url = `/api/users/${userId}/likes`;
+  const likes = await axios.get<LikedShowing[]>(url);
+  return likes.data;
 };
